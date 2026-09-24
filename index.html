@@ -145,7 +145,7 @@ const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const touch=matchMedia('(pointer:coarse)').matches,M=touch||innerWidth<801,R=matchMedia('(prefers-reduced-motion:reduce)').matches;
 gsap.registerPlugin(ScrollTrigger);
 const SS=window.speechSynthesis,INTRO="Hello, and welcome. I'm the AI voice guide for this portfolio. This is Alok Singh, a Python developer and AI and machine learning enthusiast, based in Delhi N C R, India. He is completing his B Tech in Computer Science Engineering in twenty twenty-six. Alok builds intelligent software and turns ideas into interactive experiences. Scroll down to explore his work, his skills, and how to get in touch.",THX="Thank you for visiting Alok's portfolio. You've now seen every page. If you'd like to build something intelligent together, use the contact section to start a conversation. Have a great day!";
-let vo=false,introd=false,introSpk=false,thanked=false,T3=null,ACC='142,197,255',cur='';
+let vo=false,introd=false,introSpk=false,thanked=false,thxSpk=false,cAct=false,thxT=0,T3=null,ACC='142,197,255',cur='';
 const TH={morning:{n:'MORNING VIEW',a:'154,240,160',c:0x9af0a0,c2:0x2fbf8a},evening:{n:'EVENING VIEW',a:'255,162,107',c:0xffa26b,c2:0xb5476b},night:{n:'NIGHT VIEW',a:'142,197,255',c:0x8ec5ff,c2:0x4a63c9}};
 const phase=()=>{const t=new Date().getHours();return t>=5&&t<16?'morning':t<20&&t>=16?'evening':'night'};
 function applyTheme(k){if(k===cur)return;cur=k;const t=TH[k];document.body.dataset.t=k;ACC=t.a;T3&&T3(t.c,t.c2)}
@@ -213,7 +213,7 @@ $$('.mag').forEach(el=>{el.onpointermove=e=>{if(touch)return;const r=el.getBound
 addEventListener('pointermove',e=>$('#co').textContent=`X ${String(e.clientX).padStart(4,0)} Y ${String(e.clientY).padStart(4,0)} · SCROLL ${String(Math.round(scrollY/(document.body.scrollHeight-innerHeight)*100||0)).padStart(2,0)}%`);
 $$('section[data-m]').forEach(s=>ScrollTrigger.create({trigger:s,start:'top 55%',end:'bottom 55%',onToggle:x=>x.isActive&&($('#md').textContent=s.dataset.m)}));
 ScrollTrigger.create({trigger:'#about',start:'top 70%',onEnter:()=>{if(introSpk&&SS){SS.cancel();introSpk=false;$('#cap').style.opacity=0}}});
-['home','about','work','skills','achievements','contact'].forEach(id=>ScrollTrigger.create({trigger:'#'+id,start:'top 50%',end:'bottom 50%',onToggle:x=>{$('nav a[href="#'+id+'"]').classList.toggle('on',x.isActive);if(x.isActive){seen.add(id);if(vo&&!thanked&&seen.size>=6){thanked=true;setTimeout(()=>say(THX),1200)}}}}));
+['home','about','work','skills','achievements','contact'].forEach(id=>ScrollTrigger.create({trigger:'#'+id,start:'top 50%',end:'bottom 50%',onToggle:x=>{$('nav a[href="#'+id+'"]').classList.toggle('on',x.isActive);if(x.isActive){seen.add(id);if(id=='contact'&&vo&&!thanked&&seen.size>=6){thanked=true;thxT=setTimeout(()=>{if(cAct){thxSpk=true;say(THX,()=>{thxSpk=false})}},1000)}}if(id=='contact'){cAct=x.isActive;if(!x.isActive){clearTimeout(thxT);if(thxSpk&&SS){SS.cancel();thxSpk=false;$('#cap').style.opacity=0}}}}}));
 // scenes
 if(!R){
 gsap.to('.hero-in,#me',{yPercent:-25,opacity:0,filter:'blur(12px)',scrollTrigger:{trigger:'#home',start:'top top',end:'bottom 25%',scrub:true}});
